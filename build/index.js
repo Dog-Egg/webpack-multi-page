@@ -6,7 +6,6 @@ const _ = require("lodash");
 const chunksorter_1 = require("./lib/chunksorter");
 class WebpackMultiPage {
     constructor(options = {}) {
-        this.htmlFilenames = [];
         this.options = options;
         this.context = (options === null || options === void 0 ? void 0 : options.context) || process.cwd();
         this.configFile = (options === null || options === void 0 ? void 0 : options.configFile) || 'page.config.js';
@@ -21,6 +20,7 @@ class WebpackMultiPage {
     }
     createHtmlWebpackPlugins(options) {
         const _options = options;
+        const htmlFilename = [];
         return this.configs.map(c => {
             options = _.defaults({}, _options, c.htmlWebpackPluginOptions);
             options.excludeChunks = this.configs
@@ -31,19 +31,18 @@ class WebpackMultiPage {
                 new RegExp(`^(?!${this.chunkNamePrefix})`),
                 new RegExp(`^${this.chunkNamePrefix}`)
             ]);
+            // check duplicate filename
             if (options.filename) {
-                this.checkHtmlFilename(options.filename);
+                const filename = options.filename;
+                if (htmlFilename.includes(filename)) {
+                    throw new Error(`Duplicated HTML filename: "${filename}"`);
+                }
+                else {
+                    htmlFilename.push(filename);
+                }
             }
             return new HtmlWebpackPlugin(options);
         });
-    }
-    checkHtmlFilename(filename) {
-        if (this.htmlFilenames.includes(filename)) {
-            throw new Error(`Duplicated HTML filename: "${filename}"`);
-        }
-        else {
-            this.htmlFilenames.push(filename);
-        }
     }
     findConfigFiles() {
         if (!path.isAbsolute(this.context)) {

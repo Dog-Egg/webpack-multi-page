@@ -30,7 +30,6 @@ class WebpackMultiPage {
     private readonly configFile: string
     private readonly chunkNamePrefix: string
     private _configs?: ProcessedPageConfig[]
-    private readonly htmlFilenames: string[] = []
 
     constructor(options: Options = {}) {
         this.options = options
@@ -49,6 +48,7 @@ class WebpackMultiPage {
 
     createHtmlWebpackPlugins(options?: HtmlWebpackPlugin.Options): HtmlWebpackPlugin[] {
         const _options = options
+        const htmlFilename: string[] = []
 
         return this.configs.map(c => {
             options = _.defaults({}, _options, c.htmlWebpackPluginOptions)
@@ -61,20 +61,18 @@ class WebpackMultiPage {
                 new RegExp(`^${this.chunkNamePrefix}`)
             ])
 
+            // check duplicate filename
             if (options.filename) {
-                this.checkHtmlFilename(options.filename)
+                const filename = options.filename
+                if (htmlFilename.includes(filename)) {
+                    throw new Error(`Duplicated HTML filename: "${filename}"`)
+                } else {
+                    htmlFilename.push(filename)
+                }
             }
 
             return new HtmlWebpackPlugin(options)
         })
-    }
-
-    private checkHtmlFilename(filename: string) {
-        if (this.htmlFilenames.includes(filename)) {
-            throw new Error(`Duplicated HTML filename: "${filename}"`)
-        } else {
-            this.htmlFilenames.push(filename)
-        }
     }
 
     private findConfigFiles(): string[] {
