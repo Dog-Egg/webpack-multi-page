@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "outDir": "build"
+  },
+  "include": [
+    "src"
+  ]
+}
