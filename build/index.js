@@ -31,6 +31,9 @@ class WebpackMultiPage {
                 new RegExp(`^(?!${this.chunkNamePrefix})`),
                 new RegExp(`^${this.chunkNamePrefix}`)
             ]);
+            if (options.filename) {
+                this.checkHtmlFilename(options.filename);
+            }
             return new HtmlWebpackPlugin(options);
         });
     }
@@ -53,7 +56,7 @@ class WebpackMultiPage {
         const configFiles = this.findConfigFiles();
         configFiles.forEach(f => {
             var _a;
-            const config = _.defaultsDeep({}, require(f), this.options.config);
+            const config = _.defaultsDeep(require(f), this.options.config);
             if (config.deprecated)
                 return;
             const nameArray = path.relative(this.context, f).split(path.sep).slice(0, -1);

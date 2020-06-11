@@ -61,6 +61,10 @@ class WebpackMultiPage {
                 new RegExp(`^${this.chunkNamePrefix}`)
             ])
 
+            if (options.filename) {
+                this.checkHtmlFilename(options.filename)
+            }
+
             return new HtmlWebpackPlugin(options)
         })
     }
