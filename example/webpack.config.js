@@ -3,7 +3,12 @@ const path = require('path')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
 const webpackMultiPage = new WebpackMultiPage({
-    context: path.resolve(__dirname, 'src/pages')
+    context: path.resolve(__dirname, 'src/pages'),
+    config: {
+        htmlWebpackPluginOptions: {
+            title: 'Title'
+        }
+    }
 })
 
 module.exports = {

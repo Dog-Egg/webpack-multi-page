@@ -5,8 +5,9 @@ const FileHound = require("filehound");
 const _ = require("lodash");
 const chunksorter_1 = require("./lib/chunksorter");
 class WebpackMultiPage {
-    constructor(options) {
+    constructor(options = {}) {
         this.htmlFilenames = [];
+        this.options = options;
         this.context = (options === null || options === void 0 ? void 0 : options.context) || process.cwd();
         this.configFile = (options === null || options === void 0 ? void 0 : options.configFile) || 'page.config.js';
         this.chunkNamePrefix = (options === null || options === void 0 ? void 0 : options.chunkNamePrefix) || 'page~';
@@ -52,7 +53,7 @@ class WebpackMultiPage {
         const configFiles = this.findConfigFiles();
         configFiles.forEach(f => {
             var _a;
-            const config = require(f);
+            const config = _.defaultsDeep({}, require(f), this.options.config);
             if (config.deprecated)
                 return;
             const nameArray = path.relative(this.context, f).split(path.sep).slice(0, -1);

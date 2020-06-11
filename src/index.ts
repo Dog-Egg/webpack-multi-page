@@ -25,13 +25,15 @@ interface ProcessedPageConfig {
 }
 
 class WebpackMultiPage {
+    private readonly options: Options
     private readonly context: string
     private readonly configFile: string
     private readonly chunkNamePrefix: string
     private _configs?: ProcessedPageConfig[]
     private readonly htmlFilenames: string[] = []
 
-    constructor(options?: Options) {
+    constructor(options: Options = {}) {
+        this.options = options
         this.context = options?.context || process.cwd()
         this.configFile = options?.configFile || 'page.config.js'
         this.chunkNamePrefix = options?.chunkNamePrefix || 'page~'
@@ -82,7 +84,7 @@ class WebpackMultiPage {
         const arr: ProcessedPageConfig[] = []
         const configFiles = this.findConfigFiles()
         configFiles.forEach(f => {
-            const config: PageConfig = require(f)
+            const config: PageConfig = _.defaultsDeep(require(f), this.options.config)
             if (config.deprecated) return
             const nameArray = path.relative(this.context, f).split(path.sep).slice(0, -1)
             arr.push({
